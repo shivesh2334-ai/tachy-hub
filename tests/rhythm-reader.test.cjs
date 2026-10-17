@@ -1,0 +1,16 @@
+const ts=require('typescript'),fs=require('node:fs'),assert=require('node:assert/strict');
+const mod={exports:{}};new Function('exports','module',ts.transpileModule(fs.readFileSync('lib/rhythm-reader.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2017}}).outputText)(mod.exports,mod);
+const {readRhythm:r,rhythmExamples:e}=mod.exports;
+assert.match(r(e[0]).title,/possible/);
+assert.match(r(e[1]).title,/accelerated idioventricular/);
+assert.match(r('P waves absent, irregularly irregular, HR 90 bpm').title,/fibrillation is likely/);
+assert.match(r('P waves absent, regular, HR 60 bpm').title,/junctional/);
+assert.doesNotMatch(r('12 wide QRS beats, irregular, HR 60 bpm').title,/AIVR/);
+assert.doesNotMatch(r('2 wide QRS beats, regular, HR 60 bpm').title,/accelerated/);
+assert.match(r('12 wide QRS beats, regular, HR 180 bpm').explanation,/tachycardia/);
+assert.match(r('P waves present and P waves absent').explanation,/both/);
+assert.equal(r('normal sinus rhythm').title,'Insufficient information to identify the rhythm');
+assert.equal(r(e[1]+' No syncope. No chest pain.').urgent,false);
+assert.equal(r(e[1]+' With syncope.').urgent,true);
+assert.doesNotMatch(r('12 wide QRS beats, regular, baseline HR 80 bpm, run rate 60 bpm').title,/accelerated/);
+console.log('12 rhythm interpretation regression checks passed');

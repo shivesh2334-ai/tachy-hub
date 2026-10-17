@@ -19,3 +19,9 @@ The original `tachy-hub.zip` is retained as a source archive; the extracted appl
 ## Clinical content
 
 Educational decision support only. The original archive contains historical treatment notes; deployment validation does not constitute clinical validation. Clinicians must review recommendations against current guidelines and the original ECG before use.
+
+## Free-text rhythm interpretation
+
+Open **Holter report → Describe a rhythm**. Enter findings or load either example, then select **Interpret description**. Answers contain reasoning, differential diagnoses, missing findings, and source links. Processing runs locally without an API key or text persistence. This is a bounded rule-based parser, not an ECG image reader or unrestricted language model. Supported patterns are absent-P-wave descriptions and regular wide-QRS runs; ambiguous findings request clarification.
+
+Run `node tests/rhythm-reader.test.cjs` for clinical-pattern regression checks.

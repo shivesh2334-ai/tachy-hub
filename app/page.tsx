@@ -3,6 +3,7 @@ import {useState} from "react";
 import {KB,IMG,LESSONS,QUIZ,REFS} from "@/lib/data";
 import {diagnose,alerts} from "@/lib/engine";
 import {holter,D} from "@/lib/holter";
+import RhythmReader from "@/app/components/rhythm-reader";
 const Sel=({l,v,o,s}:any)=><label>{l}<select value={v} onChange={e=>s(e.target.value)}>{o.map((x:any)=><option key={x[0]} value={x[0]}>{x[1]}</option>)}</select></label>;
 const Num=({l,v,s}:any)=><label>{l}<input type="number" step="any" value={v} onChange={e=>s(e.target.value)}/></label>;
 const Chk=({l,v,s}:any)=><label className="flex gap-2 items-center"><input type="checkbox" className="!w-auto" checked={v} onChange={e=>s(e.target.checked)}/>{l}</label>;
@@ -30,7 +31,7 @@ function Ecg(){
 }
 function Holter(){
  const [h,setH]=useState<any>({...D});const u=(k:string)=>(v:any)=>setH({...h,[k]:v});const {w,rep}=holter(h);
- return <div className="grid md:grid-cols-2 gap-4"><div className="card space-y-3"><h2 className="font-serif text-xl">Holter findings</h2>
+ return <><RhythmReader/><div className="grid md:grid-cols-2 gap-4"><div className="card space-y-3"><h2 className="font-serif text-xl">Holter findings</h2>
  <Sel l="Baseline rhythm" v={h.base} s={u("base")} o={[["SR","Sinus rhythm"],["AF","Atrial fibrillation"],["AFL","Atrial flutter"],["Paced","Paced"],["Other","Other"]]}/>
  <div className="grid grid-cols-3 gap-2"><Num l="Min HR" v={h.minHR} s={u("minHR")}/><Num l="Avg HR" v={h.avgHR} s={u("avgHR")}/><Num l="Max HR" v={h.maxHR} s={u("maxHR")}/></div>
  <div className="grid grid-cols-2 gap-2"><Num l="Longest pause (s)" v={h.pause} s={u("pause")}/><Sel l="Pause occurred in" v={h.pauseIn} s={u("pauseIn")} o={[["SR","Sinus rhythm"],["AF","AF"]]}/></div>
@@ -48,7 +49,7 @@ function Holter(){
  <div className="grid grid-cols-2 gap-2"><Num l="PVC burden (%)" v={h.pvc} s={u("pvc")}/><Num l="PAC burden (%)" v={h.pac} s={u("pac")}/></div></div>
  <div className="space-y-3">{w.map((x,i)=><div key={i} className={`card text-sm ${col[x.lvl]}`}><b>{x.lvl.toUpperCase()}:</b> {x.t}</div>)}
  <div className="card"><h3 className="font-semibold">Draft report</h3><pre className="whitespace-pre-wrap text-sm">{rep}</pre><button className="btn mt-2" onClick={()=>navigator.clipboard.writeText(rep)}>Copy report</button></div>
- <p className="text-xs">Pause defaults (2.5 s SR / 5 s AF) are your editable lab thresholds. Published sources use ≥2 s as the listing minimum and ≥3 s for pacing consideration (symptomatic). See References.</p></div></div>
+ <p className="text-xs">Pause defaults (2.5 s SR / 5 s AF) are your editable lab thresholds. Published sources use ≥2 s as the listing minimum and ≥3 s for pacing consideration (symptomatic). See References.</p></div></div></>
 }
 function Learn(){const [a,setA]=useState<any>({});return <div className="space-y-4"><div className="grid md:grid-cols-2 gap-3">{LESSONS.map(l=><div key={l[0]} className="card"><h3 className="font-serif text-lg">{l[0]}</h3><p className="text-sm">{l[1]}</p></div>)}</div>
  <div className="card"><h2 className="font-serif text-xl mb-2">Self-test</h2>{QUIZ.map((q:any,i)=><div key={i} className="mb-3"><p className="font-medium text-sm">{q[0]}</p><div className="flex flex-wrap gap-2 mt-1">{q[1].map((o:string,j:number)=><button key={j} className={`btn ${a[i]===j?(j===q[2]?"bg-green-100 border-green-600":"bg-red-100 border-red-600"):""}`} onClick={()=>setA({...a,[i]:j})}>{o}</button>)}</div></div>)}</div></div>}
